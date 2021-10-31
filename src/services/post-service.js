@@ -10,16 +10,14 @@ const getOne = async (postId) => Post.findById(postId).populate('votes').populat
 const createPost = async (newPost) => Post.create(newPost)
     .then(function (post) {
         return User.findByIdAndUpdate({ _id: post.author._id }, { $push: { posts: post._id } })
-    })
-    .catch((error) => {
-        return error;
     });
 
 const search = async (search) => Post.find({ type: { $regex: search, $options: 'i' } }).lean();
 
 const updatePost = async (postId, newData) => Post.findByIdAndUpdate(postId, newData, { runValidators: true });
 
-const deletePost = async (postId) => Post.findByIdAndDelete(postId);
+const deletePost = async (postId) => Post.findByIdAndDelete(postId)
+    .then(() => User.updateOne({}, {$unset: {posts:postId}}));
 
 const addTenant = async (houseId, personId) =>
     Post.findByIdAndUpdate(
