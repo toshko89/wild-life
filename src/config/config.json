@@ -1,0 +1,5 @@
+{
+    "JWT_SECRET": "My secret pass",
+    "DB_CONNECTION_STRING": "mongodb://localhost:27017/wildlife",
+    "TOKEN_COOKIE_NAME":"app_token"
+}
