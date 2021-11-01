@@ -8,9 +8,7 @@ const getOne = async (postId) => Post.findById(postId).populate('votes').populat
 const getAllPerUser = async (authorId) => Post.find({ author: authorId }).populate('votes').populate('author').lean();
 
 const createPost = async (newPost) => Post.create(newPost)
-    .then(function (post) {
-        return User.findByIdAndUpdate({ _id: post.author._id }, { $push: { posts: post._id } })
-    });
+    .then((post) => User.findByIdAndUpdate({ _id: post.author._id }, { $push: { posts: post._id } }));
 
 const deletePost = async (postId) => Post.findByIdAndDelete(postId)
     .then((post) => User.findByIdAndUpdate({ _id: post.author }, { $pull: { posts: post._id } }));
@@ -31,7 +29,7 @@ const downVotePost = async (postId, userId) =>
     Post.findByIdAndUpdate(
         { _id: postId },
         {
-            $pull: { votes: userId },
+            $push: { votes: userId },
             $inc: { rating: -1 }
         },
         { runValidators: true }

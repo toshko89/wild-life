@@ -3,7 +3,7 @@ const { authorization } = require('../middleWares/auth-middleware.js');
 const postService = require('../services/post-service.js');
 
 homeController.get('/', (req, res) => {
-    res.render('home')
+    res.render('home');
 });
 
 homeController.get('/profile', authorization, async (req, res) => {
