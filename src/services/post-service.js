@@ -17,12 +17,22 @@ const deletePost = async (postId) => Post.findByIdAndDelete(postId)
 
 const updatePost = async (postId, newData) => Post.findByIdAndUpdate(postId, newData, { runValidators: true });
 
-const addTenant = async (houseId, personId) =>
+const upVotePost = async (postId, userId) =>
     Post.findByIdAndUpdate(
-        { _id: houseId },
+        { _id: postId },
         {
-            $push: { tenants: personId },
-            $inc: { availablePieces: -1 }
+            $push: { votes: userId },
+            $inc: { rating: +1 }
+        },
+        { runValidators: true }
+    )
+
+const downVotePost = async (postId, userId) =>
+    Post.findByIdAndUpdate(
+        { _id: postId },
+        {
+            $pull: { votes: userId },
+            $inc: { rating: -1 }
         },
         { runValidators: true }
     )
@@ -30,7 +40,8 @@ const addTenant = async (houseId, personId) =>
 const postService = {
     getAll,
     getOne,
-    addTenant,
+    upVotePost,
+    downVotePost,
     createPost,
     updatePost,
     deletePost,
