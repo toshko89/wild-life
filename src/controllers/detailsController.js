@@ -1,6 +1,6 @@
 const detailsController = require('express').Router();
 const postService = require('../services/post-service.js');
-const { authorization, isOwn } = require('../middleWares/auth-middleware.js');
+const { authorization, isOwn, hasVoted } = require('../middleWares/auth-middleware.js');
 
 detailsController.get('/', async (req, res) => {
     try {
@@ -17,8 +17,9 @@ detailsController.get('/:postId', async (req, res) => {
         const post = await postService.getOne(req.params.postId);
         const authorName = post.author.firstName + ' ' + post.author.lastName;
         const isOwn = post.author._id == req.user?._id;
-        const isVoted = post.votes.some(x => x._id == req.user?._id);
-        res.render('details', { ...post, authorName, isOwn, isVoted });
+        const hasVoted = post.votes.some(x => x._id == req.user?._id);
+        const allVoters = post.votes.map(post => post.email).join(', ');
+        res.render('details', { ...post, authorName, isOwn, hasVoted, allVoters });
     } catch (error) {
         console.log(error);
         res.render('details', { error: error.message });
@@ -58,7 +59,7 @@ detailsController.post('/:postId/edit', authorization, isOwn, async (req, res) =
     }
 });
 
-detailsController.get('/:postId/up-vote', authorization, async (req, res) => {
+detailsController.get('/:postId/up-vote', authorization, hasVoted, async (req, res) => {
     try {
         await postService.upVotePost(req.params.postId, req.user._id);
         res.redirect(`/wildlife/details/${req.params.postId}`);
@@ -68,7 +69,7 @@ detailsController.get('/:postId/up-vote', authorization, async (req, res) => {
     }
 });
 
-detailsController.get('/:postId/down-vote', authorization, async (req, res) => {
+detailsController.get('/:postId/down-vote', authorization, hasVoted, async (req, res) => {
     try {
         await postService.downVotePost(req.params.postId, req.user._id);
         res.redirect(`/wildlife/details/${req.params.postId}`);

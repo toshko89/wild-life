@@ -48,4 +48,17 @@ async function isOwn(req, res, next) {
         return res.render('login', { error: error.message })
     }
 }
-module.exports = { authentication, authorization, isOwn }
+
+async function hasVoted(req, res, next) {
+    try {
+        const post = await postService.getOne(req.params.postId);
+        const hasVoted = post.votes.some(x => x._id == req.user?._id);
+        if (hasVoted) {
+            return res.render('home', { error: 'You already voted for this post' });
+        }
+        next();
+    } catch (error) {
+        return res.render('home', { error: error.message })
+    }
+}
+module.exports = { authentication, authorization, isOwn, hasVoted }
