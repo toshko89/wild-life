@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const handlebars = require('express-handlebars');
-const router = require('./router.js');
 const config = require('./config/config.json');
+const router = require('./router.js');
 const { authentication } = require('./middleWares/auth-middleware.js');
 
 const app = express();
