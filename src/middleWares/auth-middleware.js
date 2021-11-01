@@ -15,10 +15,11 @@ function authentication(req, res, next) {
         res.render('login', { error: 'You are not authorized to view this page, please login/regiter' });
         return next()
     }
-    
+    //Only if userName is needed otherwise remove!!!
     const user = {
         _id: tokenVerify._id,
-        email: tokenVerify.email
+        email: tokenVerify.email,
+        userName: tokenVerify.userName
     }
 
     req.user = user;

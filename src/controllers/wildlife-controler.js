@@ -1,6 +1,6 @@
 const wildlifeController = require('express').Router();
 const postService = require('../services/post-service.js');
-const { authorization, isOwn } = require('../middleWares/auth-middleware.js');
+const { authorization } = require('../middleWares/auth-middleware.js');
 const detailsController = require('./detailsController.js');
 
 
@@ -13,8 +13,7 @@ wildlifeController.post('/create', authorization, async (req, res) => {
         let { title, keyword, location, date, image, description } = req.body;
         let author = req.user._id;
         let newPost = { title, keyword, location, date, image, description, author };
-        let postData = await postService.createPost(newPost);
-        // await postService.setPostPerUser(author, postData._id);
+        await postService.createPost(newPost);
         res.redirect('/wildlife/details');
     } catch (error) {
         console.log(error);

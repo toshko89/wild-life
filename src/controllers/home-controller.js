@@ -1,24 +1,17 @@
 const homeController = require('express').Router();
 const { authorization } = require('../middleWares/auth-middleware.js');
-
 const postService = require('../services/post-service.js');
-// const { authorization } = require('../middleWares/auth-middleware.js')
 
-//TODO
+
+
 homeController.get('/', (req, res) => {
-    try {
-        // const houses = await houseService.getLatestThree();
-        res.render('home');
-    } catch (error) {
-        console.log(error);
-        // res.render('home', { error: error.message });
-    }
+    res.render('home')
 });
-//TODO
+
 homeController.get('/profile', authorization, async (req, res) => {
     const post = await postService.getAllPerUser(req.user._id);
-    console.log(post);
-    res.render('my-posts');
+    const userName = req.user.userName;
+    res.render('my-posts', { post,userName });
 });
 
 module.exports = homeController;

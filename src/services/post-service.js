@@ -3,9 +3,9 @@ const User = require('../models/User.js')
 
 const getAll = async () => Post.find().populate('votes').populate('author').lean();
 
-const getAllPerUser = async (userId) => User.findById(userId).populate('posts').lean();
-
 const getOne = async (postId) => Post.findById(postId).populate('votes').populate('author').lean();
+
+const getAllPerUser = async (authorId) => Post.find({ author: authorId }).populate('votes').populate('author').lean();
 
 const createPost = async (newPost) => Post.create(newPost)
     .then(function (post) {
@@ -13,12 +13,9 @@ const createPost = async (newPost) => Post.create(newPost)
     });
 
 const deletePost = async (postId) => Post.findByIdAndDelete(postId)
-    .then((postData) => User.findByIdAndUpdate({ _id: postData.author }, { $pull: { posts: postData._id } }));
-
-const search = async (search) => Post.find({ type: { $regex: search, $options: 'i' } }).lean();
+    .then((post) => User.findByIdAndUpdate({ _id: post.author }, { $pull: { posts: post._id } }));
 
 const updatePost = async (postId, newData) => Post.findByIdAndUpdate(postId, newData, { runValidators: true });
-
 
 const addTenant = async (houseId, personId) =>
     Post.findByIdAndUpdate(
@@ -30,16 +27,14 @@ const addTenant = async (houseId, personId) =>
         { runValidators: true }
     )
 
-
-const houseSerice = {
+const postService = {
     getAll,
     getOne,
-    search,
     addTenant,
     createPost,
     updatePost,
     deletePost,
-    getAllPerUser,
+    getAllPerUser
 }
 
-module.exports = houseSerice;
+module.exports = postService;

@@ -22,7 +22,9 @@ async function login(email, password) {
 }
 
 function createToken(user) {
-    const token = jwt.sign({ _id: user._id, email: user.email }, config.JWT_SECRET, { expiresIn: '2d' });
+    //Only if userName is needed otherwise remove !!!
+    const userName = user.firstName + ' ' + user.lastName;
+    const token = jwt.sign({ _id: user._id, email: user.email, userName }, config.JWT_SECRET, { expiresIn: '2d' });
     return token;
 };
 
