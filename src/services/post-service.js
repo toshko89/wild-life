@@ -12,12 +12,13 @@ const createPost = async (newPost) => Post.create(newPost)
         return User.findByIdAndUpdate({ _id: post.author._id }, { $push: { posts: post._id } })
     });
 
+const deletePost = async (postId) => Post.findByIdAndDelete(postId)
+    .then((postData) => User.findByIdAndUpdate({ _id: postData.author }, { $pull: { posts: postData._id } }));
+
 const search = async (search) => Post.find({ type: { $regex: search, $options: 'i' } }).lean();
 
 const updatePost = async (postId, newData) => Post.findByIdAndUpdate(postId, newData, { runValidators: true });
 
-const deletePost = async (postId) => Post.findByIdAndDelete(postId)
-    .then(() => User.updateOne({}, {$unset: {posts:postId}}));
 
 const addTenant = async (houseId, personId) =>
     Post.findByIdAndUpdate(

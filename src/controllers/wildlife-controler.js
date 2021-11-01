@@ -14,7 +14,6 @@ wildlifeController.post('/create', authorization, async (req, res) => {
         let author = req.user._id;
         let newPost = { title, keyword, location, date, image, description, author };
         let postData = await postService.createPost(newPost);
-        console.log(postData);
         // await postService.setPostPerUser(author, postData._id);
         res.redirect('/wildlife/details');
     } catch (error) {
