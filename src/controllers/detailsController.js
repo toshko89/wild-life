@@ -4,7 +4,7 @@ const { authorization, isOwn, hasVoted } = require('../middleWares/auth-middlewa
 
 detailsController.get('/', async (req, res) => {
     try {
-        const post = await postService.getAll()
+        const post = await postService.getAll();
         res.render('all-posts', { post });
     } catch (error) {
         console.log(error);
@@ -19,7 +19,7 @@ detailsController.get('/:postId', async (req, res) => {
         const isOwn = post.author._id == req.user?._id;
         const hasVoted = post.votes.some(x => x._id == req.user?._id);
         const allVoters = post.votes.map(post => post.email).join(', ');
-        res.render('details', { ...post, authorName, isOwn, hasVoted, allVoters });
+        res.render('details', { ...post, authorName, isOwn, hasVoted, allVoters, error: req.query.error });
     } catch (error) {
         console.log(error);
         res.render('details', { error: error.message });

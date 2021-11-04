@@ -54,7 +54,7 @@ async function hasVoted(req, res, next) {
         const post = await postService.getOne(req.params.postId);
         const hasVoted = post.votes.some(x => x._id == req.user?._id);
         if (hasVoted) {
-            return res.render('home', { error: 'You already voted for this post' });
+            return res.redirect(`/wildlife/details/${req.params.postId}?error=You have already voted for this post`);
         }
         next();
     } catch (error) {
