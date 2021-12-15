@@ -7,17 +7,13 @@ const getOne = async (postId) => Post.findById(postId).populate('votes').populat
 
 const getAllPerUser = async (authorId) => Post.find({ author: authorId }).populate('votes').populate('author').lean();
 
-const createPost = async (newPost) => Post.create(newPost)
-    .then((post) => User.findByIdAndUpdate({ _id: post.author._id }, { $push: { posts: post._id } }))
-    .catch((error)=>{
-        return error;
-    })
+const createPost = (newPost) => Post.create(newPost)
+
+const updateUserWithPostData = async (post) => User.findByIdAndUpdate({ _id: post.author._id }, { $push: { posts: post._id } })
 
 const deletePost = async (postId) => Post.findByIdAndDelete(postId)
-    .then((post) => User.findByIdAndUpdate({ _id: post.author }, { $pull: { posts: post._id } }))
-    .catch((error)=>{
-        return error;
-    });
+
+const deletePostFromUserDoc = async (userId, postId) => User.findByIdAndUpdate({ _id: userId }, { $pull: { posts: postId } })
 
 const updatePost = async (postId, newData) => Post.findByIdAndUpdate(postId, newData, { runValidators: true });
 
@@ -49,7 +45,9 @@ const postService = {
     createPost,
     updatePost,
     deletePost,
-    getAllPerUser
+    getAllPerUser,
+    deletePostFromUserDoc,
+    updateUserWithPostData
 }
 
 module.exports = postService;

@@ -29,7 +29,8 @@ detailsController.get('/:postId', async (req, res) => {
 detailsController.get('/:postId/delete', authorization, isOwn, async (req, res) => {
     try {
         await postService.deletePost(req.params.postId);
-        res.redirect('/');
+        await postService.deletePostFromUserDoc(req.user._id, req.params.postId);
+        res.redirect('/wildlife/details');
     } catch (error) {
         console.log(error);
         res.render('index', { error: error.message });
